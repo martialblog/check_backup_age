@@ -8,8 +8,8 @@ This script takes as input a file containing list of dates, as you would get fro
 
 The format of the dates and the regex to extract the dates can be adjusted.
 
-Date Format: https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
-Regex Format: https://docs.python.org/3.5/library/re.html
+- Date Format: https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
+- Regex Format: https://docs.python.org/3.5/library/re.html
 
 # Examples
 

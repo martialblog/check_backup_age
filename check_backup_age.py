@@ -6,6 +6,7 @@ import os
 import argparse
 import re
 import datetime
+import subprocess
 
 
 class EXIT():
@@ -26,10 +27,10 @@ def commandline(args):
     Returns the parsed arguments.
     """
 
-    parser = argparse.ArgumentParser(description='Checks the last time the offline backup has run')
+    parser = argparse.ArgumentParser(description='Checks the timestamps for files in a directory.')
 
     parser.add_argument("-p", "--path", required=True,
-                        help="Path to offline backup list file")
+                        help="Path to offline backup list file or directory")
 
     parser.add_argument("-w", "--warning",
                         help="Threshold for warnings in days. Default: 2 Days")
@@ -54,17 +55,21 @@ def commandline(args):
     return parser.parse_args(args)
 
 
-def readfile(path):
+def readdata(path):
     """
-    Checks if the file exists at the given path, then reads the file and returns the data.
+    Checks if the path exists, then reads the file or directory and returns the data.
     """
 
     if not os.path.exists(path):
-        print('No such file {0}'.format(path))
+        print('No such path {0}'.format(path))
         sys.exit(EXIT.WARN)
 
-    with open(path) as f:
-        data = f.read()
+    if os.path.isfile(path):
+        with open(path) as f:
+            data = f.read()
+    elif os.path.isdir(path):
+        data = subprocess.check_output(['ls', '--full-time', path])
+        data = data.decode("utf-8").rstrip('\n')
 
     return data
 
@@ -135,7 +140,7 @@ def main(args):
     crit = int(args.critical)
     warn = int(args.warning)
 
-    rdata = readfile(path)
+    rdata = readdata(path)
     dates = extract_dates(rdata)
     delta = calculate_delta(dates)
 
